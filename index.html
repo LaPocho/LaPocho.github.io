@@ -1,4 +1,4 @@
-        // Función para solicitar permisos y iniciar
+                // Función para solicitar permisos y iniciar
         function requestPermissionsAndStart() {
             document.getElementById('loadingText').style.display = 'block';
             document.getElementById('loadingText').textContent = 'Solicitando acceso a la cámara...';
@@ -21,7 +21,6 @@
     <title>🦕 La Extinción de Adán - Experiencia AR</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
-
     <style>
         body {
             margin: 0;
@@ -174,20 +173,44 @@
             meteoritePng.ellipse(15, 15, 12, 12);
         }
         
+        // Función para solicitar permisos y iniciar
+        function requestPermissionsAndStart() {
+            document.getElementById('loadingText').style.display = 'block';
+            document.getElementById('loadingText').textContent = 'Solicitando acceso a la cámara...';
+            
+            // Verificar si estamos en HTTPS o localhost
+            if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+                alert('Esta experiencia requiere HTTPS para acceder a la cámara. Por favor, usa una conexión segura.');
+                return;
+            }
+            
+            startExperience();
+        }
+        
         function setup() {
             createCanvas(windowWidth, windowHeight);
             
-            // Inicializar Teachable Machine
-            const modelURL = 'https://TU_USUARIO.github.io/la-extincion-de-adan/';
+            // AQUÍ COLOCAS TU MODELO ENTRENADO DE TEACHABLE MACHINE
+            // Reemplaza con tu URL cuando tengas el modelo listo:
+            const modelURL = 'https://LaPocho.github.io/la-extincion-de-adan/';
+            
+            // Descomentar estas líneas cuando tengas el modelo:
+             classifier = ml5.imageClassifier(modelURL + 'model.json', modelReady);
             
             // Por ahora, simulamos el modelo con detección por colores
-            // classifier = ml5.imageClassifier(modelURL + 'model.json', modelReady);
             
             // Para desarrollo, usamos detección simulada
             setTimeout(() => {
                 isModelLoaded = true;
                 document.getElementById('loadingText').textContent = 'Modelo cargado ✓';
             }, 2000);
+        }
+        
+        // Función que se ejecuta cuando el modelo esté listo (para el futuro)
+        function modelReady() {
+            isModelLoaded = true;
+            document.getElementById('loadingText').textContent = 'Modelo de IA cargado ✓';
+            console.log('Modelo listo para usar');
         }
         
         function startExperience() {
@@ -325,8 +348,8 @@
         }
         
         function classifyVideo() {
-            // Aquí iría la clasificación real con ML5
-            // classifier.classify(video, gotResult);
+            // CUANDO TENGAS EL MODELO LISTO, descomenta estas líneas:
+             classifier.classify(video, gotResult);
             
             // Por ahora, usamos la simulación
             setTimeout(classifyVideo, 100);
