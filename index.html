@@ -264,22 +264,17 @@ setTimeout(() => {
         }
         
         function setupVideoStream(stream) {
-            // Crear elemento video manualmente
-            let videoElement = document.createElement('video');
-            videoElement.srcObject = stream;
-            videoElement.play();
-            
-            videoElement.onloadedmetadata = function() {
-                console.log('Video metadata cargada');
-                video = createCapture(VIDEO);
-                video.size(windowWidth, windowHeight);
-                video.hide();
-                
-                startTime = millis();
-                classifyVideo();
-                document.getElementById('loadingText').style.display = 'none';
-            };
-        }
+    // Crear elemento video y asignar el stream
+    video = document.createElement('video');
+    video.setAttribute('playsinline', ''); // necesario en iOS Safari
+    video.srcObject = stream;
+    video.onloadedmetadata = function() {
+        video.play();
+        startTime = millis();
+        classifyVideo();
+        document.getElementById('loadingText').style.display = 'none';
+    };
+}
         
         function draw() {
             if (!experienceStarted) return;
@@ -287,13 +282,13 @@ setTimeout(() => {
             background(0);
             
             // Mostrar video de fondo
-            if (video && video.loadedmetadata) {
-                push();
-                translate(width, 0);
-                scale(-1, 1); // Efecto espejo
-                image(video, 0, 0, width, height);
-                pop();
-            }
+            if (video && video.readyState >= 2) {
+    push();
+    translate(width, 0);
+    scale(-1, 1);
+    image(video, 0, 0, width, height);
+    pop();
+}
             
             // Actualizar estado de detección (simulado por ahora)
             simulateDetection();
