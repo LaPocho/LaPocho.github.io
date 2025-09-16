@@ -231,34 +231,54 @@ setTimeout(() => {
             // Inicializar cámara con fallback para móviles
             let constraints = {
                 video: {
-                    facingMode: "environment"
-                }
+                    facingMode: "environment",
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                },
+                audio: false
             };
+             navigator.mediaDevices.getUserMedia(constraints)
+                .then(function(stream) {
+                    console.log('Cámara trasera obtenida');
+                    setupVideoStream(stream);
+                })
+                .catch(function(err) {
+                    console.log('Error con cámara trasera:', err);
+                    // Fallback: intentar con cualquier cámara
+                    return navigator.mediaDevices.getUserMedia({
+                        video: true,
+                        audio: false
+                    });
+                })
+                .then(function(stream) {
+                    if (stream) {
+                        console.log('Cámara alternativa obtenida');
+                        setupVideoStream(stream);
+                    }
+                })
+                .catch(function(err) {
+                    console.log('Error total con cámara:', err);
+                    alert('No se pudo acceder a la cámara. Verifica los permisos y que estés usando HTTPS.');
+                    document.getElementById('loadingText').textContent = 'Error: No se pudo acceder a la cámara';
+                });
+        }
+        
+        function setupVideoStream(stream) {
+            // Crear elemento video manualmente
+            let videoElement = document.createElement('video');
+            videoElement.srcObject = stream;
+            videoElement.play();
             
-            // Crear captura con manejo de errores
-            video = createCapture(constraints, videoReady, videoError);
-            
-            function videoReady() {
+            videoElement.onloadedmetadata = function() {
+                console.log('Video metadata cargada');
+                video = createCapture(VIDEO);
                 video.size(windowWidth, windowHeight);
                 video.hide();
-                // Comenzar clasificación simulada
+                
                 startTime = millis();
                 classifyVideo();
-            }
-            
-            function videoError() {
-                console.log('Error con cámara trasera, intentando cámara frontal...');
-                // Fallback a cualquier cámara disponible
-                video = createCapture(VIDEO, () => {
-                    video.size(windowWidth, windowHeight);
-                    video.hide();
-                    startTime = millis();
-                    classifyVideo();
-                }, () => {
-                    console.log('Error: No se puede acceder a ninguna cámara');
-                    alert('Por favor, permite el acceso a la cámara para continuar con la experiencia AR.');
-                });
-            }
+                document.getElementById('loadingText').style.display = 'none';
+            };
         }
         
         function draw() {
