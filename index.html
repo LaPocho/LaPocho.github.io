@@ -21,6 +21,13 @@
     <title>🦕 La Extinción de Adán - Experiencia AR</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ml5/0.12.2/ml5.min.js"></script>
+  <script>
+    // Verificar que las librerías se carguen correctamente
+    window.addEventListener('load', function() {
+        console.log('p5.js disponible:', typeof p5 !== 'undefined');
+        console.log('ml5.js disponible:', typeof ml5 !== 'undefined');
+    });
+</script>
     <style>
         body {
             margin: 0;
@@ -191,19 +198,23 @@
             createCanvas(windowWidth, windowHeight);
             
             // AQUÍ COLOCAS TU MODELO ENTRENADO DE TEACHABLE MACHINE
-            // Reemplaza con tu URL cuando tengas el modelo listo:
-            const modelURL = 'https://LaPocho.github.io/la-extincion-de-adan/';
-            
-            // Descomentar estas líneas cuando tengas el modelo:
-             classifier = ml5.imageClassifier(modelURL + 'model.json', modelReady);
-            
-            // Por ahora, simulamos el modelo con detección por colores
-            
-            // Para desarrollo, usamos detección simulada
-            setTimeout(() => {
-                isModelLoaded = true;
-                document.getElementById('loadingText').textContent = 'Modelo cargado ✓';
-            }, 2000);
+// Reemplaza con tu URL cuando tengas el modelo listo:
+const modelURL = 'https://LaPocho.github.io/la-extincion-de-adan/';
+
+// Verificar si ml5 está disponible antes de usarlo
+if (typeof ml5 !== 'undefined') {
+    console.log('ml5.js cargado correctamente');
+    // Descomentar cuando tengas el modelo:
+    // classifier = ml5.imageClassifier(modelURL + 'model.json', modelReady);
+} else {
+    console.log('ml5.js no disponible, usando simulación');
+}
+
+// Para desarrollo, usamos detección simulada
+setTimeout(() => {
+    isModelLoaded = true;
+    document.getElementById('loadingText').textContent = 'Sistema listo ✓';
+}, 2000);
         }
         
         // Función que se ejecuta cuando el modelo esté listo (para el futuro)
